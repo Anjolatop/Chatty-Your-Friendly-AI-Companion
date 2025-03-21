@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./ChatBox.css"; 
 
 const ChatBox = () => {
@@ -7,26 +7,34 @@ const ChatBox = () => {
     const [loading, setLoading] = useState(false); 
     const sendMessage = async () => {
         if (!input) return;
-
+    
         const newMessages = [...messages, { user: input }];
         setMessages(newMessages);
         setInput("");
         setLoading(true);
-
+    
         try {
             const response = await fetch("http://127.0.0.1:5000/api/get_response", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message: input }),
             });
+    
+            if (!response.ok) {
+                console.error("Error with response:", response);
+                return;
+            }
+    
             const data = await response.json();
-
+            console.log("Bot response:", data.response);  // Log the response from the backend
+    
             setMessages([...newMessages, { bot: data.response }]);
         } catch (error) {
             console.error("Error:", error);
         }
         setLoading(false);
     };
+    
 
     return (
         <div className="chat-container futuristic-background">
