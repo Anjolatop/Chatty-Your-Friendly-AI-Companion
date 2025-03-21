@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import "./ChatBox.css"; 
 
 const ChatBox = () => {
-    const [messages, setMessages] = useState([]); // Stores chat messages
-    const [input, setInput] = useState(""); // Tracks user input
-
+    const [messages, setMessages] = useState([]); 
+    const [input, setInput] = useState("");
+    const [loading, setLoading] = useState(false); 
     const sendMessage = async () => {
-        if (!input) return; // Don't send empty messages
+        if (!input) return;
 
-        // Add user message to the chat
-        setMessages([...messages, { user: input }]);
+        const newMessages = [...messages, { user: input }];
+        setMessages(newMessages);
+        setInput("");
+        setLoading(true);
 
         try {
-            // Send the message to the backend
             const response = await fetch("http://127.0.0.1:5000/api/get_response", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -19,32 +21,33 @@ const ChatBox = () => {
             });
             const data = await response.json();
 
-            // Add the bot's response to the chat
-            setMessages([...messages, { user: input }, { bot: data.response }]);
+            setMessages([...newMessages, { bot: data.response }]);
         } catch (error) {
             console.error("Error:", error);
         }
-
-        setInput(""); // Clear input field
+        setLoading(false);
     };
 
     return (
-        <div>
-            <div style={{ height: "300px", overflowY: "auto", border: "1px solid #ccc", padding: "10px" }}>
+        <div className="chat-container futuristic-background">
+             <h1 className="chatbot-title">Twaine</h1>
+            <div className="chat-box">
                 {messages.map((msg, index) => (
-                    <div key={index}>
-                        <p><strong>{msg.user ? "You" : "Bot"}:</strong> {msg.user || msg.bot}</p>
+                    <div key={index} className={msg.user ? "chat-bubble user" : "chat-bubble bot"}>
+                        {msg.user || msg.bot}
                     </div>
                 ))}
+                {loading && <div className="typing-indicator">Bot is typing...</div>}
             </div>
-            <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your message..."
-                style={{ width: "70%", padding: "10px" }}
-            />
-            <button onClick={sendMessage} style={{ padding: "10px 20px" }}>Send</button>
+            <div className="input-container">
+                <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    placeholder="Type your message..."
+                />
+                <button onClick={sendMessage} className="send-button">Send</button>
+            </div>
         </div>
     );
 };
