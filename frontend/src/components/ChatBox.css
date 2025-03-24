@@ -131,3 +131,6 @@ input {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  .goal-container, .progress-container, .journal-container {
+    margin-top: 20px;
+}
