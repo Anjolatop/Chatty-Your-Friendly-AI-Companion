@@ -19,7 +19,7 @@ Clone the repository:
 bash
 Copy
 Edit
-git clone https://github.com/your-username/encouragement-chatbot.git
+git clone [https://github.com/your-username/encouragement-chatbot.git](https://github.com/Anjolatop/Chatty-Your-Friendly-AI-Companion)
 cd encouragement-chatbot
 Install dependencies:
 
